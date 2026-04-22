@@ -9,7 +9,7 @@
     "test": "ng test",
     "db:migrate": "prisma migrate deploy",
     "serve:ssr:AASD.Angular": "node dist/AASD.Angular/server/server.mjs",
-    "start:ssr": "npm run build && npm run db:migrate && npm run serve:ssr:AASD.Angular"
+    "start:ssr": "npm run db:migrate && npx prisma db seed && npm run build && npm run serve:ssr:AASD.Angular"
   },
   "private": true,
   "packageManager": "npm@11.12.1",

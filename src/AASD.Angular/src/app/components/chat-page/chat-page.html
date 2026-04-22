@@ -1,12 +1,18 @@
 <div class="flex h-full" style="background-color: red;">
   <div class="flex-[3] flex flex-col bg-[var(--color-ink-black-950)]">
     <div class="flex-1 bg-[var(--color-ink-black-900)] m-3 rounded-3xl">
-
+      @if (conversations$ | async; as conversations) {
+        <div class="flex justify-center p-4">
+          @for (conversation of conversations; track conversation.id) {
+            <button class="hover:bg-[var(--color-ink-black-500)] min-w-full text-white font-bold py-2 px-4 rounded-full bg-[var(--color-ink-black-400)]">{{ conversation.title }}</button>
+          }
+        </div>
+      }
     </div>
   </div>
   <div class="flex-[9] flex flex-col bg-[var(--color-ink-black-950)]">
     <div class="flex-1 bg-[var(--color-ink-black-900)] m-3 rounded-3xl">
-    
+
     </div>
   </div>
 </div>
