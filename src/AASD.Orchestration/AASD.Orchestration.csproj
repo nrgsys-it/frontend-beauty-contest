@@ -2,10 +2,15 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <UserSecretsId>25b8033d-9957-4c57-b489-1a53e6e6947c</UserSecretsId>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.2.3" />
+      <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.5.2" />
+    </ItemGroup>
 
 </Project>

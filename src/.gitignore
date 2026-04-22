@@ -1,0 +1,22 @@
+# AASD.Orchestration (.NET build outputs)
+AASD.Orchestration/bin/
+AASD.Orchestration/obj/
+
+# AASD.Angular (Angular/Node generated outputs)
+AASD.Angular/node_modules/
+AASD.Angular/.angular/
+AASD.Angular/dist/
+AASD.Angular/tmp/
+AASD.Angular/out-tsc/
+AASD.Angular/coverage/
+AASD.Angular/.sass-cache/
+
+# AASD.Angular logs and runtime artifacts
+AASD.Angular/npm-debug.log*
+AASD.Angular/yarn-error.log*
+AASD.Angular/testem.log
+AASD.Angular/libpeerconnection.log
+
+# OS artifacts
+**/.DS_Store
+**/Thumbs.db
