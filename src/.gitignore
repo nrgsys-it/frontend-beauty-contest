@@ -16,6 +16,8 @@ AASD.Angular/npm-debug.log*
 AASD.Angular/yarn-error.log*
 AASD.Angular/testem.log
 AASD.Angular/libpeerconnection.log
+AASD.Angular/.env
+.idea
 
 # OS artifacts
 **/.DS_Store

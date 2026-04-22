@@ -7,7 +7,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:AASD.Angular": "node dist/AASD.Angular/server/server.mjs"
+    "db:migrate": "prisma migrate deploy",
+    "serve:ssr:AASD.Angular": "node dist/AASD.Angular/server/server.mjs",
+    "start:ssr": "npm run build && npm run db:migrate && npm run serve:ssr:AASD.Angular"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
@@ -20,8 +22,11 @@
     "@angular/platform-server": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@angular/ssr": "^21.2.7",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "@tailwindplus/elements": "^1.0.22",
     "express": "^5.1.0",
+    "pg": "^8.20.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
@@ -35,8 +40,12 @@
     "jsdom": "^28.0.0",
     "postcss": "^8.5.3",
     "prettier": "^3.8.1",
+    "prisma": "^7.8.0",
     "tailwindcss": "^4.1.12",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
