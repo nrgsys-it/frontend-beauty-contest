@@ -1,3 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+:root {
+  --color-ink-black-50: #e7f5fd;
+  --color-ink-black-100: #d0ebfb;
+  --color-ink-black-200: #a0d6f8;
+  --color-ink-black-300: #71c2f4;
+  --color-ink-black-400: #41adf1;
+  --color-ink-black-500: #1299ed;
+  --color-ink-black-600: #0e7abe;
+  --color-ink-black-700: #0b5c8e;
+  --color-ink-black-800: #073d5f;
+  --color-ink-black-900: #041f2f;
+  --color-ink-black-950: #021521;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
