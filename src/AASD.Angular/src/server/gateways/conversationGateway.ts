@@ -2,14 +2,20 @@ import type { Conversation } from '@prisma/client';
 import { prisma } from '../prisma';
 
 export interface ConversationGateway {
-  getAllConversations(): Promise<Conversation[]>;
+  getConversationsByUserId(userId: string): Promise<Conversation[]>;
 }
 
 export const conversationGateway: ConversationGateway = {
-  getAllConversations() {
-    return prisma.conversation.findMany();
+  getConversationsByUserId(userId: string) {
+    return prisma.conversation.findMany({
+      where: {
+        users: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+    });
   },
 };
 
-export const getAllConversations = () =>
-  conversationGateway.getAllConversations();

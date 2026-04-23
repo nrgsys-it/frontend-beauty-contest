@@ -1,3 +1,23 @@
-<div class="flex justify-center items-center h-full">
-  <p>home-page works!</p>
+<div class="flex justify-center items-center h-full bg-(--color-ink-black-900)">
+  @if (users$ | async; as users) {
+    <div class="flex flex-col justify-center p-4">
+      @if(!isSelected()){
+        @for (user of users; track user.id) {
+          <button class="hover:bg-[var(--color-ink-black-500)] min-w-full text-white font-bold py-5 px-8 text-xl rounded-2xl bg-[var(--color-ink-black-400)] m-2"
+                  (click)="selectUser(user)">
+            <i class="fa fa-user mr-2"></i>
+            {{ user.name }} {{ user.surname }}
+          </button>
+        }
+      }@else{
+        <div class="flex flex-col items-center">
+          <button class="hover:bg-red-900 bg-red-700 min-w-full text-white font-bold py-5 px-8 text-xl rounded-2xl m-2"
+                  (click)="unselectUser()">
+            <i class="fa fa-trash mr-2"></i>
+            Seleziona un altro utente
+          </button>
+        </div>
+      }
+    </div>
+  }
 </div>

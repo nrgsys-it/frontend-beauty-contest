@@ -7,20 +7,37 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 import { conversationGateway } from './server/gateways/conversationGateway';
+import {userGateway} from './server/gateways/userGateway';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-app.get('/api/conversations', async (_req, res, next) => {
+app.get('/api/conversations', async (req, res, next) => {
   try {
-    const conversations = await conversationGateway.getAllConversations();
+    const userId = typeof req.query['userId'] === 'string' ? req.query['userId'] : null;
+
+    if (userId === null) {
+      res.status(400).json({ message: 'userId query parameter is required' });
+      return;
+    }
+
+    const conversations = await conversationGateway.getConversationsByUserId(userId);
     res.json(conversations);
   } catch (error) {
     next(error);
   }
 });
+
+app.get('/api/users', async (_req, res, next) => {
+  try {
+    const users = await userGateway.getAllUsers();
+    res.json(users);
+  } catch (error) {
+    next(error);
+  }
+})
 
 /**
  * Serve static files from /browser

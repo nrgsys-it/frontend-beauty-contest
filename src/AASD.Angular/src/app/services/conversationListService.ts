@@ -13,7 +13,9 @@ export interface ConversationListItem {
 export class ConversationListService {
   private readonly httpClient = inject(HttpClient);
 
-  getList(): Observable<ConversationListItem[]> {
-    return this.httpClient.get<ConversationListItem[]>('/api/conversations');
+  getList(userId: string): Observable<ConversationListItem[]> {
+    return this.httpClient.get<ConversationListItem[]>('/api/conversations', {
+      params: { userId },
+    });
   }
 }
