@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter_web/widgets/backend_status.dart';
 import 'package:flutter_web/widgets/counter_button.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,6 +10,9 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Web Spike'),
+        actions: const [Padding(padding: EdgeInsets.only(right: 16), child: Center(
+          child: BackendStatus()
+        ))],
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
       ),
