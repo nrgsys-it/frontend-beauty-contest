@@ -1,6 +1,6 @@
 namespace AASD.Backend.Domain.Entities;
 
-public sealed class User
+public sealed class User : Entity
 {
     private User()
     {
@@ -32,13 +32,4 @@ public sealed class User
 
     public ICollection<Message> Messages { get; private set; } = new List<Message>();
 
-    private static string Require(string value, string fieldName)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException($"{fieldName} is required.", fieldName);
-        }
-
-        return value.Trim();
-    }
 }

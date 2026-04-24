@@ -14,13 +14,23 @@ public sealed class MessageRepository(BackendDbContext dbContext) : IMessageRepo
             .OrderBy(message => message.MessageSequence)
             .ToListAsync(cancellationToken);
 
-    public async Task<long> GetNextMessageSequenceAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    public async Task<Message> AddAndReturnAsync(Guid id, Guid conversationId, Guid senderId, string content, DateTime createdAt, CancellationToken cancellationToken = default)
     {
-        var maxValue = await dbContext.Messages
-            .Where(message => message.ConversationId == conversationId)
-            .MaxAsync(message => (long?)message.MessageSequence, cancellationToken);
+        await dbContext.Database.ExecuteSqlInterpolatedAsync($@"
+            INSERT INTO ""Messages"" (""Id"", ""ConversationId"", ""SenderId"", ""Content"", ""MessageSequence"", ""CreatedAt"")
+            VALUES (
+                {id}, {conversationId}, {senderId}, {content},
+                COALESCE(
+                    (SELECT MAX(""MessageSequence"") FROM ""Messages"" WHERE ""ConversationId"" = {conversationId}),
+                    0
+                ) + 1,
+                {createdAt}
+            )", cancellationToken);
 
-        return (maxValue ?? 0) + 1;
+        return await dbContext.Messages
+            .AsNoTracking()
+            .Include(m => m.Sender)
+            .FirstAsync(m => m.Id == id, cancellationToken);
     }
 
     public Task AddAsync(Message message, CancellationToken cancellationToken = default)

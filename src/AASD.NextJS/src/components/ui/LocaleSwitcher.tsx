@@ -11,11 +11,12 @@ const locales = [
 export function LocaleSwitcher() {
   const pathname = usePathname()
 
-  // Determine current locale from path
-  const currentLocale = locales.find(l => pathname.startsWith(`/${l.code}`))?.code ?? 'en'
+  // With localePrefix='as-needed': default locale (en) has no prefix.
+  // Non-default locales (/it/...) have a prefix.
+  const currentLocale = locales.find(l => l.code !== 'en' && pathname.startsWith(`/${l.code}`))?.code ?? 'en'
 
-  // Strip current locale prefix to get base path
-  const basePath = currentLocale
+  // Strip non-default locale prefix to get base path
+  const basePath = currentLocale !== 'en'
     ? pathname.replace(new RegExp(`^/${currentLocale}`), '') || '/'
     : pathname
 
@@ -23,10 +24,12 @@ export function LocaleSwitcher() {
     <div className="flex items-center gap-1">
       {locales.map(locale => {
         const isActive = locale.code === currentLocale
+        // en → no prefix (/chat), it → prefixed (/it/chat)
+        const href = locale.code === 'en' ? basePath : `/${locale.code}${basePath}`
         return (
           <Link
             key={locale.code}
-            href={`/${locale.code}${basePath}`}
+            href={href}
             className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
               isActive
                 ? 'bg-primary text-white'

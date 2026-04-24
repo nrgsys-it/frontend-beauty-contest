@@ -106,7 +106,7 @@ Never commit `.env`, `.env.local`, or any file containing secrets.
 # Development (port defaults to 3001)
 npm run dev
 
-# Production mode (Aspire-managed, binds 0.0.0.0:3001)
+# Production mode (Aspire-managed — Next.js reads PORT env var injected by Aspire)
 npm run start:aspire
 
 # Build
@@ -116,15 +116,23 @@ npm run build
 npm run lint
 ```
 
-> `start:aspire` uses `next dev -p ${PORT:-3001} -H 0.0.0.0` — it binds all interfaces so Aspire's reverse proxy can reach it. Do not change the `-H 0.0.0.0` or port.
+> `start:aspire` is just `next dev` — no port flag, no host flag. Aspire injects `PORT=3000`
+> (the internal/target port) and Next.js reads it automatically. Aspire's YARP proxy exposes
+> port **3001** externally and routes to Next.js on port 3000. Do **not** add `-p`, `-H`, or
+> any explicit port — let the `PORT` env var drive it.
 
 ---
 
 ## Critical Rules
 
-### 1. Port Is Fixed at 3001
+### 1. External Port Is Fixed at 3001; Internal Port Is 3000
 
-Aspire injects `PORT=3001`. The `start:aspire` script honours this via `${PORT:-3001}`. **Do not change this port** anywhere — not in `next.config.ts`, not in any npm script, not in Aspire resource definitions.
+Aspire's `AppHost.cs` uses `.WithHttpEndpoint(port: 3001, targetPort: 3000, env: "PORT")`:
+- **External (YARP/browser):** 3001 — do not change this.
+- **Internal (Next.js process):** 3000 — Aspire injects `PORT=3000` and YARP proxies 3001→3000.
+
+The `start:aspire` script must **not** hardcode `-p 3001` (that would cause a port conflict with
+Aspire's YARP proxy). Always leave the port to the `PORT` env var.
 
 ### 2. SignalR — Always Use `@microsoft/signalr`
 

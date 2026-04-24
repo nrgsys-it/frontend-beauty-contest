@@ -20,8 +20,9 @@ internal static class ContractMappings
             conversation.CreatedAt,
             conversation.UpdatedAt,
             conversation.Participants
-                .Where(participant => participant.User is not null)
-                .Select(participant => participant.User!.ToParticipantDto())
+                .Select(participant => participant.User is not null
+                    ? participant.User.ToParticipantDto()
+                    : throw new InvalidOperationException($"Participant {participant.UserId} has no loaded User navigation property."))
                 .ToList());
 
     public static MessageDto ToDto(this Message message)

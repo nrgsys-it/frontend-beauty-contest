@@ -1,6 +1,6 @@
 namespace AASD.Backend.Domain.Entities;
 
-public sealed class Conversation
+public sealed class Conversation : Entity
 {
     private Conversation()
     {
@@ -37,18 +37,17 @@ public sealed class Conversation
         Touch(joinedAt);
     }
 
+    public void EnsureSenderIsParticipant(Guid senderId)
+    {
+        if (Participants.All(p => p.UserId != senderId))
+        {
+            throw new InvalidOperationException("Sender must be a participant of the conversation.");
+        }
+    }
+
     public void Touch(DateTime updatedAt)
     {
         UpdatedAt = updatedAt;
     }
 
-    private static string Require(string value, string fieldName)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException($"{fieldName} is required.", fieldName);
-        }
-
-        return value.Trim();
-    }
 }

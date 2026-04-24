@@ -18,6 +18,9 @@ public static class DependencyInjection
 
         services.AddDbContext<BackendDbContext>(options => options.UseNpgsql(connectionString));
 
+        // IReadDbContext resolves to the already-registered BackendDbContext scoped instance
+        services.AddScoped<IReadDbContext>(sp => sp.GetRequiredService<BackendDbContext>());
+
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IConversationRepository, ConversationRepository>();
         services.AddScoped<IMessageRepository, MessageRepository>();

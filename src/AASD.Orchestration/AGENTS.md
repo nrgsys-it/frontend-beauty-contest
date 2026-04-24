@@ -51,12 +51,12 @@ builder.AddNpmApp("angular", "../AASD.Angular", "start")
     .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints();
 
-// 5. Next.js — PORT is FIXED at 3001
+// 5. Next.js — external port 3001, internal (Next.js) port 3000
 builder.AddNpmApp("nextjs", "../AASD.NextJS", "start:aspire")
     .WithEnvironment("BACKEND_API_URL", backend.GetEndpoint("http"))
     .WithEnvironment("NEXT_PUBLIC_BACKEND_API_URL", backend.GetEndpoint("http"))
     .WaitFor(backend)
-    .WithHttpEndpoint(port: 3001, env: "PORT")
+    .WithHttpEndpoint(port: 3001, targetPort: 3000, env: "PORT")
     .WithExternalHttpEndpoints();
 ```
 
@@ -64,13 +64,19 @@ builder.AddNpmApp("nextjs", "../AASD.NextJS", "start:aspire")
 
 ## Critical Rules
 
-### 1. Next.js Port is Fixed at 3001
+### 1. Next.js External Port is Fixed at 3001 — Internal Port is 3000
 
 ```csharp
-.WithHttpEndpoint(port: 3001, env: "PORT")
+.WithHttpEndpoint(port: 3001, targetPort: 3000, env: "PORT")
 ```
 
-This is a hard constraint. The `start:aspire` npm script in `AASD.NextJS/package.json` passes `-p 3001`. **Do not change this port** in `AppHost.cs`, `next.config.ts`, or any npm script.
+- `port: 3001` — the port Aspire's YARP proxy exposes externally (browser, other services). **Do not change.**
+- `targetPort: 3000` — the port Next.js actually listens on. Aspire injects `PORT=3000`.
+- `env: "PORT"` — Aspire injects the `targetPort` value (3000) into the Next.js process as `PORT`.
+
+The `start:aspire` script in `AASD.NextJS/package.json` is simply `next dev` with no `-p` flag.
+Next.js 15 reads `PORT` automatically. **Never hardcode** `-p 3001` in that script — it would
+conflict with YARP which is already occupying port 3001.
 
 ### 2. Resource Names Are Stable — Do Not Rename
 
@@ -119,7 +125,7 @@ All env vars are resolved at Aspire startup from live resource endpoints. They a
 |---|---|---|
 | `PORT` | Angular | Aspire-assigned HTTP port |
 | `BACKEND_API_URL` | Angular | Backend HTTP endpoint |
-| `PORT` | Next.js | `3001` (fixed) |
+| `PORT` | Next.js | `3000` (internal/target port — YARP exposes 3001 externally) |
 | `BACKEND_API_URL` | Next.js | Backend HTTP endpoint |
 | `NEXT_PUBLIC_BACKEND_API_URL` | Next.js | Backend HTTP endpoint |
 | `BackendDatabase` (conn string) | Backend API | PostgreSQL `data` database connection string |

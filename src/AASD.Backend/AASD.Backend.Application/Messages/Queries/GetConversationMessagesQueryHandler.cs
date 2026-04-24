@@ -1,24 +1,39 @@
 using AASD.Backend.Application.Abstractions.Cqrs;
 using AASD.Backend.Application.Abstractions.Persistence;
 using AASD.Backend.Application.Contracts.Messages;
-using AASD.Backend.Application.Mappings;
+using Microsoft.EntityFrameworkCore;
 
 namespace AASD.Backend.Application.Messages.Queries;
 
-public sealed class GetConversationMessagesQueryHandler(
-    IConversationRepository conversationRepository,
-    IMessageRepository messageRepository)
+public sealed class GetConversationMessagesQueryHandler(IReadDbContext readDb)
     : IQueryHandler<GetConversationMessagesQuery, IReadOnlyList<MessageDto>>
 {
     public async Task<IReadOnlyList<MessageDto>> HandleAsync(GetConversationMessagesQuery query, CancellationToken cancellationToken = default)
     {
-        var conversation = await conversationRepository.GetByIdWithParticipantsAsync(query.ConversationId, cancellationToken);
-        if (conversation is null)
+        var exists = await readDb.Conversations
+            .AsNoTracking()
+            .AnyAsync(c => c.Id == query.ConversationId, cancellationToken);
+
+        if (!exists)
         {
             throw new KeyNotFoundException("Conversation not found.");
         }
 
-        var messages = await messageRepository.ListByConversationAsync(query.ConversationId, cancellationToken);
-        return messages.Select(message => message.ToDto()).ToList();
+        return await readDb.Messages
+            .AsNoTracking()
+            .Where(m => m.ConversationId == query.ConversationId)
+            .OrderBy(m => m.MessageSequence)
+            .Select(m => new MessageDto(
+                m.Id,
+                m.Content,
+                m.SenderId,
+                m.ConversationId,
+                m.CreatedAt,
+                new MessageSenderDto(
+                    m.Sender!.Id,
+                    m.Sender.Name,
+                    m.Sender.Surname,
+                    m.Sender.Email)))
+            .ToListAsync(cancellationToken);
     }
 }

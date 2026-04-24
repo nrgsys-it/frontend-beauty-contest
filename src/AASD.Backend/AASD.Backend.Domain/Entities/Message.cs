@@ -1,6 +1,6 @@
 namespace AASD.Backend.Domain.Entities;
 
-public sealed class Message
+public sealed class Message : Entity
 {
     private Message()
     {
@@ -32,13 +32,4 @@ public sealed class Message
 
     public Conversation? Conversation { get; private set; }
 
-    private static string Require(string value, string fieldName)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException($"{fieldName} is required.", fieldName);
-        }
-
-        return value.Trim();
-    }
 }
