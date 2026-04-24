@@ -13,7 +13,10 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddProblemDetails();
@@ -21,16 +24,12 @@ builder.Services.AddHealthChecks().AddDbContextCheck<BackendDbContext>();
 
 builder.Services.AddCors(options =>
 {
-    var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-        ?? ["http://localhost:4200", "http://localhost:3001"];
-
     options.AddPolicy("FrontendClients", policy =>
     {
         policy
-            .WithOrigins(allowedOrigins)
+            .AllowAnyOrigin()
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowAnyMethod();
     });
 });
 
@@ -68,6 +67,7 @@ app.UseExceptionHandler(exceptionHandler =>
 });
 
 app.UseCors("FrontendClients");
+app.Logger.LogInformation("CORS policy 'FrontendClients' registered — AllowAnyOrigin");
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAuthorization();

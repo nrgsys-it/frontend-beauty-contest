@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p ${PORT:-3001}",
     "lint": "next lint",
-    "start:aspire": "next dev"
+    "start:aspire": "next dev -p 3001"
   },
   "dependencies": {
     "@microsoft/signalr": "^9.0.4",

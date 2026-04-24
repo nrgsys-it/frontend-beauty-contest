@@ -18,7 +18,7 @@ builder.AddNpmApp("nextjs", "../AASD.NextJS", "start:aspire")
   .WithEnvironment("BACKEND_API_URL", backend.GetEndpoint("http"))
   .WithEnvironment("NEXT_PUBLIC_BACKEND_API_URL", backend.GetEndpoint("http"))
   .WaitFor(backend)
-  .WithHttpEndpoint(env: "PORT")
+  .WithHttpEndpoint(port: 3001, env: "PORT")
   .WithExternalHttpEndpoints();
 
 builder.Build().Run();

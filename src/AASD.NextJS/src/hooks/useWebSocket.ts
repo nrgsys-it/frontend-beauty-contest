@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import {
   HubConnectionBuilder,
   HubConnectionState,
+  HttpTransportType,
   LogLevel,
 } from '@microsoft/signalr'
 import { getBackendHubUrl } from '@/lib/backend'
@@ -25,7 +26,10 @@ export function useWebSocket({ conversationId, userId, onMessage }: UseWebSocket
 
     const senderId = userId ?? DEFAULT_CLIENT_USER_ID
     const connection = new HubConnectionBuilder()
-      .withUrl(getBackendHubUrl())
+      .withUrl(getBackendHubUrl(), {
+        transport: HttpTransportType.WebSockets | HttpTransportType.LongPolling,
+        withCredentials: false,
+      })
       .withAutomaticReconnect([0, 2000, 5000, 10000])
       .configureLogging(LogLevel.Warning)
       .build()
