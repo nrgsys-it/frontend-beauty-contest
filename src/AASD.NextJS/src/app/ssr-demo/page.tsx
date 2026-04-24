@@ -46,7 +46,10 @@ export default async function SsrDemoPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <PageHeader namespace="ssrDemo" />
+        <PageHeader
+          heading="Server-Side Rendering Demo"
+          description="This page demonstrates how Next.js renders components on the server. Green badges indicate server-rendered content; blue badges appear after client-side hydration."
+        />
         <div className="mb-4">
           <ServerRenderBadge label="Server Component · SSR · this page" />
         </div>

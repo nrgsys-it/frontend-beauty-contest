@@ -14,7 +14,10 @@ export default async function WsDemoPage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <PageHeader namespace="wsDemo" />
+      <PageHeader
+        heading="WebSocket / SignalR Demo"
+        description="This page demonstrates real-time communication using SignalR (@microsoft/signalr). Watch the connection lifecycle as you interact."
+      />
 
       {activeConversation && senderId ? (
         <WsDemo

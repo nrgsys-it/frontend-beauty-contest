@@ -1,29 +1,26 @@
 'use client'
 
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
 
 const NAV_ITEMS = [
-  { key: 'home' as const, href: '/' },
-  { key: 'chat' as const, href: '/chat' },
-  { key: 'ssrDemo' as const, href: '/ssr-demo' },
-  { key: 'wsDemo' as const, href: '/ws-demo' },
-  { key: 'libsDemo' as const, href: '/libs-demo' },
-  { key: 'settings' as const, href: '/settings' },
+  { label: 'Home', href: '/' },
+  { label: 'Chat', href: '/chat' },
+  { label: 'SSR Demo', href: '/ssr-demo' },
+  { label: 'WebSocket Demo', href: '/ws-demo' },
+  { label: 'Libraries', href: '/libs-demo' },
+  { label: 'Settings', href: '/settings' },
 ]
 
 export function NavLinks() {
-  const t = useTranslations('nav')
-
   return (
     <div className="flex items-center gap-6">
-      {NAV_ITEMS.map(({ key, href }) => (
+      {NAV_ITEMS.map(({ label, href }) => (
         <Link
-          key={key}
+          key={href}
           href={href}
           className="text-sm text-text-muted hover:text-primary transition-colors"
         >
-          {t(key)}
+          {label}
         </Link>
       ))}
     </div>
