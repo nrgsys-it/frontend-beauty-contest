@@ -44,3 +44,7 @@ __screenshots__/
 Thumbs.db
 
 /src/generated/prisma
+
+# Build intermediates
+/obj/
+/bin/
