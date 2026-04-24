@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_web/services/backend_service.dart';
 
 class BackendStatus extends StatefulWidget {
@@ -34,8 +34,9 @@ class _BackendStatusState extends State<BackendStatus> {
         style: TextStyle(color: Colors.grey),
       );
     }
-    
-    return Text(isConnected! ? 'Connesso' : 'Disconnesso',
+
+    return Text(
+      isConnected! ? 'Connesso' : 'Disconnesso',
       style: TextStyle(
         color: isConnected! ? Colors.white : Colors.red,
         fontWeight: FontWeight.bold,

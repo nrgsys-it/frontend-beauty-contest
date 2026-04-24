@@ -5,7 +5,7 @@
   final String email;
   final String role;
   final String status;
-  
+
   User({
     required this.id,
     required this.firstName,
@@ -14,8 +14,8 @@
     required this.role,
     required this.status,
   });
-  
-  factory User.fromJson(Map<String, dynamic> json){
+
+  factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
       firstName: json['firstName'],
@@ -25,5 +25,32 @@
       status: json['status'],
     );
   }
-  
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'role': role,
+      'status': status,
+    };
+  }
+
+  User copyWith({
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? role,
+    String? status,
+  }) {
+    return User(
+      id: id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      role: role ?? this.role,
+      status: status ?? this.status,
+    );
+  }
 }
