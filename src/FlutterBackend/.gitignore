@@ -1,0 +1,8 @@
+# https://dart.dev/guides/libraries/private-files
+# Created by `dart pub`
+.dart_tool/
+
+# SQLite database files (runtime artefacts)
+data/*.sqlite
+data/*.sqlite-wal
+data/*.sqlite-shm
