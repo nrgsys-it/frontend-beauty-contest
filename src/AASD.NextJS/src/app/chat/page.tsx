@@ -6,7 +6,7 @@ import ConversationListSkeleton from '@/components/chat/ConversationListSkeleton
 
 export const metadata: Metadata = { title: 'Chat' }
 
-// This is a React Server Component - data fetched directly, no API call
+// This is a React Server Component - data fetched on the server
 export default async function ChatPage({
   searchParams,
 }: {

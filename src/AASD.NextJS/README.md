@@ -7,7 +7,8 @@ Chat application built with **Next.js 15** (App Router) to evaluate the framewor
 - **TypeScript 5** — strict mode
 - **Tailwind CSS v4** — CSS-first configuration
 - **Prisma** — shared schema with Angular branch
-- **WebSocket (native `ws`)** — real-time messaging (separate process)
+- **ASP.NET Backend API** — shared conversation/message persistence
+- **SignalR client** — real-time messaging via backend hub
 - **Zustand** — client-side state
 - **NextAuth.js v5** — SSR-first authentication
 - **TanStack Query v5** — client data fetching
@@ -18,19 +19,18 @@ Chat application built with **Next.js 15** (App Router) to evaluate the framewor
 
 ```bash
 npm install
-npm run dev        # Next.js on PORT env (default 3001)
-npm run ws-server  # WebSocket server on WS_PORT (default 3002)
+npm run dev         # Next.js on PORT env (default 3001)
+npm run start:aspire
 ```
 
 ## Environment
 
-Copy `.env.example` to `.env.local` and fill in values. When running via .NET Aspire, `PORT` and `DATABASE_URL` are injected automatically.
+Copy `.env.example` to `.env.local` and fill in values. In Aspire mode, `PORT`, `BACKEND_API_URL`, and `NEXT_PUBLIC_BACKEND_API_URL` are injected automatically.
 
 ## Architecture
 
 - `app/` — App Router pages, layouts, Server Components
-- `app/actions/` — Server Actions (data mutations)
+- `app/actions/` — Server Actions that call the shared backend
 - `components/` — Reusable React components
-- `lib/` — Utilities, Prisma singleton, auth config
-- `ws-server/` — Standalone WebSocket server (separate process)
+- `lib/` — Utilities, backend API client, auth config
 - `prisma/` — Schema and migrations

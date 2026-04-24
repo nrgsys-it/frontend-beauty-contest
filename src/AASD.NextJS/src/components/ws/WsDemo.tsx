@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useTransition } from 'react'
+import { sendMessage } from '@/app/actions/messages'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import type { WsMessageType } from '@/lib/types'
-
-const DEMO_CONV_ID = 'demo-room-00000000-0000-0000-0000-000000000000'
 
 interface LogEntry {
   time: string
@@ -12,9 +11,16 @@ interface LogEntry {
   content: string
 }
 
-export default function WsDemo() {
+interface WsDemoProps {
+  conversationId: string
+  senderId: string
+  title: string
+}
+
+export default function WsDemo({ conversationId, senderId, title }: WsDemoProps) {
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [input, setInput] = useState('')
+  const [isPending, startTransition] = useTransition()
 
   const addLog = useCallback((direction: LogEntry['direction'], content: string) => {
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -25,32 +31,39 @@ export default function WsDemo() {
     addLog('in', JSON.stringify(msg))
   }, [addLog])
 
-  const { status, sendMessage } = useWebSocket({
-    conversationId: DEMO_CONV_ID,
+  const { status } = useWebSocket({
+    conversationId,
+    userId: senderId,
     onMessage: handleMessage,
   })
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!input.trim()) return
-    const now = new Date()
-    const msg: WsMessageType = {
-      type: 'chat',
-      payload: {
-        conversationId: DEMO_CONV_ID,
-        message: {
-          id: crypto.randomUUID(),
-          content: input.trim(),
-          senderId: 'demo',
-          conversationId: DEMO_CONV_ID,
-          createdAt: now,
-          sender: { id: 'demo', name: 'Demo', surname: 'User' },
-        },
-      },
-    }
-    sendMessage(msg)
-    addLog('out', JSON.stringify(msg))
+    if (!input.trim() || isPending) return
+
+    const content = input.trim()
     setInput('')
+
+    startTransition(async () => {
+      const result = await sendMessage({
+        content,
+        conversationId,
+        senderId,
+      })
+
+      if (result.message) {
+        const envelope: WsMessageType = {
+          type: 'chat',
+          payload: {
+            conversationId,
+            message: result.message,
+          },
+        }
+        addLog('out', JSON.stringify(envelope))
+      } else if (result.error) {
+        addLog('sys', typeof result.error === 'string' ? result.error : 'Unable to send')
+      }
+    })
   }
 
   const statusColors: Record<string, string> = {
@@ -63,8 +76,8 @@ export default function WsDemo() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       <div className={`px-4 py-2 flex items-center justify-between text-sm font-medium ${statusColors[status] || statusColors.disconnected}`}>
-        <span>WebSocket: {status.toUpperCase()}</span>
-        <span className="font-mono text-xs">{process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3002'}/chat</span>
+        <span>SignalR: {status.toUpperCase()}</span>
+        <span className="font-mono text-xs">{title}</span>
       </div>
 
       <div className="h-80 overflow-y-auto bg-gray-900 p-4 font-mono text-xs space-y-1">
@@ -90,22 +103,21 @@ export default function WsDemo() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Send a message via WebSocket..."
+          placeholder="Send a message through backend + SignalR..."
           className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          disabled={status !== 'connected'}
+          disabled={status !== 'connected' || isPending}
         />
         <button
           type="submit"
-          disabled={status !== 'connected' || !input.trim()}
+          disabled={status !== 'connected' || !input.trim() || isPending}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40"
         >
-          Send
+          {isPending ? '...' : 'Send'}
         </button>
       </form>
 
       <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-500">
-        Open this page in a second browser tab - messages sent here appear there in real-time via native WebSocket.
-        Reconnect uses exponential backoff (1s -&gt; 2s -&gt; 4s -&gt; max 16s).
+        Open this page in a second browser tab. Messages are persisted through the shared backend and delivered in real-time via SignalR.
       </div>
     </div>
   )

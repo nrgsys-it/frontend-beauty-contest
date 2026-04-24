@@ -3,17 +3,30 @@ import { Suspense } from 'react'
 import StatsCard from '@/components/ssr/StatsCard'
 import ConversationStats from '@/components/ssr/ConversationStats'
 import UserList from '@/components/ssr/UserList'
-import { prisma } from '@/lib/prisma'
+import {
+  getConversationsFromBackend,
+  getMessagesFromBackend,
+  getUsersFromBackend,
+} from '@/lib/backend'
 
 export const metadata: Metadata = { title: 'SSR Demo' }
 
 // RSC 1: fetch stats in parallel (no waterfall)
 async function fetchStats() {
-  const [convCount, msgCount, userCount] = await Promise.all([
-    prisma.conversation.count(),
-    prisma.message.count(),
-    prisma.user.count(),
+  const [conversations, users] = await Promise.all([
+    getConversationsFromBackend(),
+    getUsersFromBackend(),
   ])
+
+  const messageCountByConversation = await Promise.all(
+    conversations.map((conversation) =>
+      getMessagesFromBackend(conversation.id).then((messages) => messages.length),
+    ),
+  )
+
+  const convCount = conversations.length
+  const msgCount = messageCountByConversation.reduce((sum, count) => sum + count, 0)
+  const userCount = users.length
   return { convCount, msgCount, userCount }
 }
 

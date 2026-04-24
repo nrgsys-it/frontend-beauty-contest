@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     template: '%s | AASD Chat',
     default: 'AASD Chat — Next.js Beauty Contest',
   },
-  description: 'Beauty Contest: Next.js Chat App with SSR and Real-time WebSocket',
+  description: 'Beauty Contest: Next.js Chat App with SSR and SignalR real-time updates',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 SSR Demo
               </Link>
               <Link href="/ws-demo" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                WS Demo
+                SignalR Demo
               </Link>
               <Link href="/libs-demo" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                 Libs
@@ -47,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
         <footer className="border-t border-gray-200 mt-auto">
           <div className="container mx-auto px-4 h-12 flex items-center justify-center text-xs text-gray-400">
-            AASD Beauty Contest — Next.js · React Server Components · WebSocket
+            AASD Beauty Contest — Next.js · React Server Components · SignalR
           </div>
         </footer>
       </body>

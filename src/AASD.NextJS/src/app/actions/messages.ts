@@ -1,6 +1,16 @@
 'use server'
 
-import { prisma } from '@/lib/prisma'
+import {
+  backendRequest,
+  getConversationsFromBackend,
+  getMessagesFromBackend,
+  getUsersFromBackend,
+} from '@/lib/backend'
+import type {
+  ConversationWithLastMessage,
+  MessageWithSender,
+  UserSummary,
+} from '@/lib/types'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 
@@ -18,50 +28,82 @@ export async function sendMessage(data: z.infer<typeof SendMessageSchema>) {
 
   const { content, conversationId, senderId } = parsed.data
 
-  const message = await prisma.message.create({
-    data: { content, conversationId, senderId },
-    include: { sender: { select: { id: true, name: true, surname: true } } },
-  })
+  try {
+    const message = await backendRequest<MessageWithSender>(
+      `/api/conversations/${conversationId}/messages`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ content, senderId }),
+      },
+    )
 
-  // Increment message sequence
-  await prisma.conversation.update({
-    where: { id: conversationId },
-    data: { message_sequence: { increment: 1 } },
-  })
-
-  revalidatePath(`/chat`)
-  return { message }
+    revalidatePath('/chat')
+    return { message }
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Unable to send the message right now.',
+    }
+  }
 }
 
 export async function getMessages(conversationId: string) {
-  return prisma.message.findMany({
-    where: { conversationId },
-    include: { sender: { select: { id: true, name: true, surname: true } } },
-    orderBy: { createdAt: 'asc' },
-    take: 100,
-  })
+  return getMessagesFromBackend(conversationId)
 }
 
 export async function getConversations() {
-  return prisma.conversation.findMany({
-    orderBy: { updatedAt: 'desc' },
-    include: {
-      messages: {
-        orderBy: { createdAt: 'desc' },
-        take: 1,
-        include: { sender: { select: { name: true } } },
-      },
-    },
-  })
+  return getConversationsFromBackend()
 }
 
-export async function createConversation(title: string) {
+export async function getUsers() {
+  return getUsersFromBackend()
+}
+
+type CreateConversationResult =
+  | { conversation: ConversationWithLastMessage }
+  | { error: string }
+
+export async function createConversation(
+  title: string,
+  participantIds?: string[],
+): Promise<CreateConversationResult> {
   const parsed = z.string().min(1).max(100).safeParse(title)
   if (!parsed.success) return { error: 'Invalid title' }
 
-  const conversation = await prisma.conversation.create({
-    data: { title: parsed.data },
-  })
-  revalidatePath('/chat')
-  return { conversation }
+  const participantCandidates = participantIds && participantIds.length > 0
+    ? participantIds
+    : (await getUsersFromBackend()).map((user: UserSummary) => user.id).slice(0, 2)
+
+  if (participantCandidates.length === 0) {
+    return { error: 'No participants available to create a conversation.' }
+  }
+
+  try {
+    await backendRequest<{ id: string }>('/api/conversations', {
+      method: 'POST',
+      body: JSON.stringify({
+        title: parsed.data,
+        participantIds: participantCandidates,
+      }),
+    })
+
+    const conversations = await getConversationsFromBackend()
+    const created = conversations.find((conversation) => conversation.title === parsed.data)
+
+    if (!created) {
+      return { error: 'Conversation was created but could not be reloaded.' }
+    }
+
+    revalidatePath('/chat')
+    return { conversation: created }
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Unable to create conversation right now.',
+    }
+  }
 }

@@ -25,14 +25,26 @@ export default function ChatLayout({
   const [activeId, setActiveId] = useState<string | null>(activeConversationId)
   const [liveMessages, setLiveMessages] = useState<MessageWithSender[]>([])
 
+  const activeConversation = conversations.find(
+    (conversation) => conversation.id === activeId,
+  )
+  const activeUserId = activeConversation?.participants[0]?.id ?? null
+
   const handleWsMessage = useCallback((msg: WsMessageType) => {
     if (msg.type === 'chat') {
-      setLiveMessages((prev) => [...prev, msg.payload.message])
+      setLiveMessages((prev) => {
+        if (prev.some((message) => message.id === msg.payload.message.id)) {
+          return prev
+        }
+
+        return [...prev, msg.payload.message]
+      })
     }
   }, [])
 
-  const { status, sendMessage } = useWebSocket({
+  const { status } = useWebSocket({
     conversationId: activeId,
+    userId: activeUserId,
     onMessage: handleWsMessage,
   })
 
@@ -63,7 +75,7 @@ export default function ChatLayout({
           <MessageArea
             conversationId={activeId}
             liveMessages={liveMessages}
-            sendMessage={sendMessage}
+            senderId={activeUserId}
             wsStatus={status}
           />
         ) : (

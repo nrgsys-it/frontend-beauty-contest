@@ -1,11 +1,7 @@
-import { prisma } from '@/lib/prisma'
+import { getUsersFromBackend } from '@/lib/backend'
 
 export default async function UserList() {
-  const users = await prisma.user.findMany({
-    take: 5,
-    select: { id: true, name: true, surname: true, email: true },
-    orderBy: { createdAt: 'desc' },
-  })
+  const users = (await getUsersFromBackend()).slice(0, 5)
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -28,7 +24,7 @@ export default async function UserList() {
         </ul>
       )}
       <p className="text-xs text-gray-400 mt-4 pt-3 border-t">
-        ⚡ Fetched server-side - zero client JS
+        ⚡ Fetched server-side from shared backend API
       </p>
     </div>
   )

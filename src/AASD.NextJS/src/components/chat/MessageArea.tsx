@@ -2,22 +2,19 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react'
 import { getMessages, sendMessage as sendMessageAction } from '@/app/actions/messages'
-import type { MessageWithSender, WsMessageType } from '@/lib/types'
-
-// Hardcoded demo user - replace with real auth
-const DEMO_USER_ID = 'demo-user-id'
+import type { MessageWithSender, RealtimeStatus } from '@/lib/types'
 
 interface Props {
   conversationId: string
   liveMessages: MessageWithSender[]
-  sendMessage: (msg: WsMessageType) => void
-  wsStatus: string
+  senderId: string | null
+  wsStatus: RealtimeStatus
 }
 
 export default function MessageArea({
   conversationId,
   liveMessages,
-  sendMessage: wsSend,
+  senderId,
   wsStatus,
 }: Props) {
   const [messages, setMessages] = useState<MessageWithSender[]>([])
@@ -35,7 +32,10 @@ export default function MessageArea({
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, liveMessages])
 
-  const allMessages = [...messages, ...liveMessages]
+  const allMessages = [...messages, ...liveMessages].filter(
+    (message, index, source) =>
+      source.findIndex((candidate) => candidate.id === message.id) === index,
+  )
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -48,18 +48,9 @@ export default function MessageArea({
       const result = await sendMessageAction({
         content,
         conversationId,
-        senderId: DEMO_USER_ID,
+        senderId: senderId ?? '00000000-0000-0000-0000-000000000001',
       })
       if (result.message) {
-        // Broadcast via WS so other clients receive it
-        wsSend({
-          type: 'chat',
-          payload: {
-            conversationId,
-            message: result.message as MessageWithSender,
-          },
-        })
-        // Reload local messages from DB
         const fresh = await getMessages(conversationId)
         setMessages(fresh)
       }
@@ -76,7 +67,7 @@ export default function MessageArea({
           </div>
         )}
         {allMessages.map((msg, i) => {
-          const isOwn = msg.senderId === DEMO_USER_ID
+          const isOwn = senderId ? msg.senderId === senderId : false
           return (
             <div
               key={msg.id ?? i}
@@ -121,12 +112,12 @@ export default function MessageArea({
           placeholder={
             wsStatus === 'connected' ? 'Type a message...' : 'Connecting...'
           }
-          disabled={isPending}
+          disabled={isPending || !senderId}
           className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
         />
         <button
           type="submit"
-          disabled={!input.trim() || isPending}
+          disabled={!input.trim() || isPending || !senderId}
           className="px-5 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 disabled:opacity-40 transition-colors"
         >
           {isPending ? '...' : 'Send'}
