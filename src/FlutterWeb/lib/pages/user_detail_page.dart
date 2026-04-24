@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web/models/user.dart';
-import 'package:flutter_web/services/backend_service.dart';
+import 'package:flutter_web/providers/users_state.dart';
+import 'package:provider/provider.dart';
 
 class UserDetailPage extends StatefulWidget {
   final User user;
@@ -68,7 +69,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     );
 
     try {
-      final result = await BackendService().updateUser(updated);
+      final result = await context.read<UsersState>().updateUser(updated);
       if (!mounted) return;
       setState(() {
         _user = result;
