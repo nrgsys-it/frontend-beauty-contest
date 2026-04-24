@@ -1,18 +1,20 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import type { ConversationWithLastMessage, MessageWithSender } from './types'
+import type { ConversationWithLastMessage, MessageWithSender, RealtimeStatus, RealtimeStatusEntry } from './types'
 
 interface ChatState {
   activeConversationId: string | null
   conversations: ConversationWithLastMessage[]
   liveMessages: Record<string, MessageWithSender[]>
-  wsStatus: 'connecting' | 'connected' | 'disconnected' | 'error'
+  wsStatus: RealtimeStatus
+  wsStatusHistory: RealtimeStatusEntry[]
 
   setActiveConversation: (id: string | null) => void
   setConversations: (convs: ConversationWithLastMessage[]) => void
   addLiveMessage: (conversationId: string, message: MessageWithSender) => void
   clearLiveMessages: (conversationId: string) => void
-  setWsStatus: (status: ChatState['wsStatus']) => void
+  setWsStatus: (status: RealtimeStatus) => void
+  setWsStatusHistory: (history: RealtimeStatusEntry[]) => void
 }
 
 export const useChatStore = create<ChatState>()(
@@ -22,6 +24,7 @@ export const useChatStore = create<ChatState>()(
       conversations: [],
       liveMessages: {},
       wsStatus: 'disconnected',
+      wsStatusHistory: [],
 
       setActiveConversation: (id) =>
         set({ activeConversationId: id }, false, 'setActiveConversation'),
@@ -47,6 +50,7 @@ export const useChatStore = create<ChatState>()(
           'clearLiveMessages'
         ),
       setWsStatus: (status) => set({ wsStatus: status }, false, 'setWsStatus'),
+      setWsStatusHistory: (history) => set({ wsStatusHistory: history }, false, 'setWsStatusHistory'),
     }),
     { name: 'ChatStore' }
   )

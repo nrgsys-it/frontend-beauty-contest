@@ -8,7 +8,7 @@ import {
   LogLevel,
 } from '@microsoft/signalr'
 import { getBackendHubUrl } from '@/lib/backend'
-import type { RealtimeStatus, WsMessageType, MessageWithSender } from '@/lib/types'
+import type { RealtimeStatus, RealtimeStatusEntry, WsMessageType, MessageWithSender } from '@/lib/types'
 
 const DEFAULT_CLIENT_USER_ID = '00000000-0000-0000-0000-000000000001'
 
@@ -20,6 +20,14 @@ interface UseWebSocketOptions {
 
 export function useWebSocket({ conversationId, userId, onMessage }: UseWebSocketOptions) {
   const [status, setStatus] = useState<RealtimeStatus>('disconnected')
+  const [statusHistory, setStatusHistory] = useState<RealtimeStatusEntry[]>([])
+
+  const updateStatus = (next: RealtimeStatus) => {
+    setStatus(next)
+    setStatusHistory((prev) =>
+      [...prev, { status: next, timestamp: Date.now() }].slice(-10)
+    )
+  }
 
   useEffect(() => {
     if (!conversationId) return
@@ -34,7 +42,7 @@ export function useWebSocket({ conversationId, userId, onMessage }: UseWebSocket
       .configureLogging(LogLevel.Warning)
       .build()
 
-    setStatus('connecting')
+    updateStatus('connecting')
 
     connection.on('ReceiveMessage', (message: MessageWithSender) => {
       onMessage?.({
@@ -47,29 +55,29 @@ export function useWebSocket({ conversationId, userId, onMessage }: UseWebSocket
     })
 
     connection.onreconnecting(() => {
-      setStatus('connecting')
+      updateStatus('connecting')
     })
 
     connection.onreconnected(async () => {
-      setStatus('connected')
+      updateStatus('connected')
       try {
         await connection.invoke('JoinConversation', conversationId, senderId)
       } catch {
-        setStatus('error')
+        updateStatus('error')
       }
     })
 
     connection.onclose(() => {
-      setStatus('disconnected')
+      updateStatus('disconnected')
     })
 
     void (async () => {
       try {
         await connection.start()
         await connection.invoke('JoinConversation', conversationId, senderId)
-        setStatus('connected')
+        updateStatus('connected')
       } catch {
-        setStatus('error')
+        updateStatus('error')
       }
     })()
 
@@ -86,5 +94,5 @@ export function useWebSocket({ conversationId, userId, onMessage }: UseWebSocket
     }
   }, [conversationId, onMessage, userId])
 
-  return { status }
+  return { status, statusHistory }
 }

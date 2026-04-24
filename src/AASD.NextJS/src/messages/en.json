@@ -1,0 +1,97 @@
+{
+  "nav": {
+    "home": "Home",
+    "chat": "Chat",
+    "ssrDemo": "SSR Demo",
+    "wsDemo": "WebSocket Demo",
+    "libsDemo": "Libraries",
+    "settings": "Settings"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "submit": "Submit"
+  },
+  "home": {
+    "title": "AASD Beauty Contest",
+    "subtitle": "Next.js 15 · React 19 · App Router",
+    "description": "A feature comparison between Angular 21 and Next.js 15 frontends",
+    "heroTitle": "AASD Chat",
+    "heroTagline": "Next.js 15 · App Router · SSR · Real-time SignalR",
+    "heroBadge": "Frontend Beauty Contest — React/Next.js branch",
+    "ctaChat": "Open Chat",
+    "ctaSettings": "Settings",
+    "featureSsr": "SSR",
+    "featureSsrDesc": "React Server Components",
+    "featureRealtime": "Real-time",
+    "featureRealtimeDesc": "SignalR over shared backend",
+    "featureTypeSafe": "Type-safe",
+    "featureTypeSafeDesc": "TypeScript + Zod"
+  },
+  "chat": {
+    "conversations": "Conversations",
+    "newConversation": "New conversation",
+    "noConversations": "No conversations yet",
+    "selectConversation": "Select a conversation to start chatting",
+    "typeMessage": "Type a message...",
+    "send": "Send",
+    "sending": "Sending...",
+    "noMessages": "No messages yet. Start the conversation!",
+    "createModal": {
+      "title": "New Conversation",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Enter conversation title...",
+      "participants": "Participants (optional)",
+      "loadingUsers": "Loading users...",
+      "noUsers": "No users available",
+      "cancel": "Cancel",
+      "create": "Create",
+      "creating": "Creating...",
+      "titleRequired": "Title must be between 1 and 100 characters"
+    },
+    "signalr": {
+      "label": "SignalR",
+      "history": "History",
+      "recentTransitions": "Recent transitions",
+      "connecting": "Connecting",
+      "connected": "Connected",
+      "reconnecting": "Reconnecting",
+      "disconnected": "Disconnected",
+      "error": "Error"
+    }
+  },
+  "ssrDemo": {
+    "heading": "Server-Side Rendering Demo",
+    "description": "This page demonstrates how Next.js renders components on the server. Green badges indicate server-rendered content; blue badges appear after client-side hydration.",
+    "serverSection": "Server-Rendered Content",
+    "legend": {
+      "title": "How to read the badges",
+      "server": "Server Component — rendered at request time on the server. Timestamp is baked into the HTML.",
+      "client": "Client Component — hydrated in the browser after the initial HTML is delivered."
+    }
+  },
+  "wsDemo": {
+    "heading": "WebSocket / SignalR Demo",
+    "description": "This page demonstrates real-time communication using SignalR (@microsoft/signalr). Watch the connection lifecycle as you interact."
+  },
+  "libsDemo": {
+    "heading": "Libraries Demo",
+    "description": "Live demonstrations of the selected React/Next.js ecosystem libraries."
+  },
+  "settings": {
+    "heading": "Settings",
+    "description": "Manage your preferences and account details.",
+    "profile": "Profile",
+    "profileDesc": "Manage your account details",
+    "notifications": "Notifications",
+    "notificationsDesc": "Configure notification preferences",
+    "theme": "Theme",
+    "themeDesc": "Light / Dark / System",
+    "about": "About",
+    "aboutDesc": "AASD Beauty Contest — Next.js branch"
+  }
+}

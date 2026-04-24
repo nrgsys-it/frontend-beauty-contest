@@ -34,8 +34,14 @@ export interface ConversationWithLastMessage {
 export type RealtimeStatus =
   | 'connecting'
   | 'connected'
+  | 'reconnecting'
   | 'disconnected'
   | 'error'
+
+export interface RealtimeStatusEntry {
+  status: RealtimeStatus
+  timestamp: number  // Date.now()
+}
 
 // Real-time message envelope used by the SignalR hook
 export type WsMessageType =

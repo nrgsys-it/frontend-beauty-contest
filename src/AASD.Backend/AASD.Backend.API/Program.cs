@@ -6,6 +6,8 @@ using AASD.Backend.Infrastructure.Persistence;
 using AASD.Backend.Infrastructure.Persistence.Seed;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,22 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddPrometheusExporter();
+    })
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation();
+    });
 
 var app = builder.Build();
 
@@ -75,6 +93,7 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<ChatHub>("/chat-hub");
 app.MapHealthChecks("/health");
+app.MapPrometheusScrapingEndpoint();
 
 if (app.Configuration.GetValue("Seed:Enabled", app.Environment.IsDevelopment()))
 {

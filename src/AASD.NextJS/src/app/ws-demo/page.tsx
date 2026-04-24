@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
-import { getConversations, getUsers } from '@/app/actions/messages'
+import { getConversations } from '@/app/actions/messages'
+import { getUsers } from '@/app/actions/conversations'
 import WsDemo from '@/components/ws/WsDemo'
+import { PageHeader } from '@/components/ui/PageHeader'
 
 export const metadata: Metadata = { title: 'SignalR Demo' }
 
@@ -12,12 +14,7 @@ export default async function WsDemoPage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">SignalR Demo</h1>
-        <p className="text-gray-500">
-          This page uses the shared backend API and SignalR hub. Open two tabs to verify real-time message fanout.
-        </p>
-      </div>
+      <PageHeader namespace="wsDemo" />
 
       {activeConversation && senderId ? (
         <WsDemo
