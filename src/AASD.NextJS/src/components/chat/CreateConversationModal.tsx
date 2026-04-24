@@ -100,17 +100,17 @@ export function CreateConversationModal({ onCreated, onClose }: Props) {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="bg-white rounded-xl shadow-2xl border border-gray-200 w-full max-w-md mx-4 p-6"
+          className="bg-surface rounded-xl shadow-2xl border border-border w-full max-w-md mx-4 p-6"
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <h2 id="create-conv-title" className="text-lg font-semibold text-gray-900">
+            <h2 id="create-conv-title" className="text-lg font-semibold text-text">
               New Conversation
             </h2>
             <button
               onClick={onClose}
               aria-label="Close modal"
-              className="text-gray-400 hover:text-gray-700 p-1 rounded transition-colors"
+              className="text-text-muted hover:text-text p-1 rounded transition-colors"
             >
               ✕
             </button>
@@ -119,8 +119,8 @@ export function CreateConversationModal({ onCreated, onClose }: Props) {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Title input with inline Zod error */}
             <div>
-              <label htmlFor="conv-title" className="block text-sm font-medium text-gray-700 mb-1">
-                Title <span className="text-red-500">*</span>
+              <label htmlFor="conv-title" className="block text-sm font-medium text-text mb-1">
+                Title <span className="text-danger">*</span>
               </label>
               <input
                 id="conv-title"
@@ -133,14 +133,14 @@ export function CreateConversationModal({ onCreated, onClose }: Props) {
                 autoComplete="off"
                 aria-invalid={!!titleError}
                 aria-describedby={titleError ? 'title-error' : undefined}
-                className={`w-full px-3 py-2 border rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 text-sm transition-colors ${
+                className={`w-full px-3 py-2 border rounded-lg bg-surface text-text placeholder-text-muted focus:outline-none focus:ring-2 text-sm transition-colors ${
                   titleError
-                    ? 'border-red-400 focus:ring-red-300'
-                    : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
+                    ? 'border-danger focus:ring-danger/30'
+                    : 'border-border focus:ring-primary focus:border-transparent'
                 }`}
               />
               <div className="flex items-center justify-between mt-1">
-                <AnimatePresence mode="wait">
+                  <AnimatePresence mode="wait">
                   {titleError ? (
                     <motion.p
                       key="error"
@@ -150,7 +150,7 @@ export function CreateConversationModal({ onCreated, onClose }: Props) {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.15 }}
-                      className="text-xs text-red-600"
+                      className="text-xs text-danger"
                     >
                       {titleError}
                     </motion.p>
@@ -158,34 +158,34 @@ export function CreateConversationModal({ onCreated, onClose }: Props) {
                     <span key="empty" />
                   )}
                 </AnimatePresence>
-                <p className="text-xs text-gray-400 ml-auto">{title.length}/100</p>
+                <p className="text-xs text-text-muted ml-auto">{title.length}/100</p>
               </div>
             </div>
 
             {/* Participants */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text mb-2">
                 Participants (optional)
               </label>
               {isPendingUsers ? (
-                <div className="text-sm text-gray-400 py-2">Loading users...</div>
+                <div className="text-sm text-text-muted py-2">Loading users...</div>
               ) : (
-                <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-lg bg-gray-50 divide-y divide-gray-100">
+                <div className="max-h-40 overflow-y-auto border border-border rounded-lg bg-surface-2 divide-y divide-border">
                   {users.length === 0 ? (
-                    <div className="text-sm text-gray-400 text-center py-3">No users available</div>
+                    <div className="text-sm text-text-muted text-center py-3">No users available</div>
                   ) : (
                     users.map((user) => (
                       <label
                         key={user.id}
-                        className="flex items-center gap-3 px-3 py-2 hover:bg-white cursor-pointer transition-colors"
+                        className="flex items-center gap-3 px-3 py-2 hover:bg-surface cursor-pointer transition-colors"
                       >
                         <input
                           type="checkbox"
                           checked={selectedIds.includes(user.id)}
                           onChange={() => toggleUser(user.id)}
-                          className="rounded accent-blue-600 flex-shrink-0"
+                          className="rounded accent-primary flex-shrink-0"
                         />
-                        <span className="text-sm text-gray-800 truncate">
+                        <span className="text-sm text-text truncate">
                           {user.name && user.surname
                             ? `${user.name} ${user.surname}`
                             : (user.name ?? user.email ?? user.id)}
@@ -196,7 +196,7 @@ export function CreateConversationModal({ onCreated, onClose }: Props) {
                 </div>
               )}
               {selectedIds.length > 0 && (
-                <p className="text-xs text-blue-600 mt-1">
+                <p className="text-xs text-primary mt-1">
                   {selectedIds.length} participant{selectedIds.length > 1 ? 's' : ''} selected
                 </p>
               )}
@@ -211,7 +211,7 @@ export function CreateConversationModal({ onCreated, onClose }: Props) {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   role="alert"
-                  className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+                  className="text-sm text-danger bg-danger/10 border border-danger/30 rounded-lg px-3 py-2"
                 >
                   {serverError}
                 </motion.div>
@@ -223,14 +223,14 @@ export function CreateConversationModal({ onCreated, onClose }: Props) {
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 text-sm hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 border border-border rounded-lg text-text text-sm hover:bg-surface-2 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isPendingCreate || !title.trim() || !!titleError}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                className="flex-1 px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
               >
                 {isPendingCreate ? 'Creating...' : 'Create'}
               </button>

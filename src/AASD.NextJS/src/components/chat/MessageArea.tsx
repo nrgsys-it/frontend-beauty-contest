@@ -69,6 +69,7 @@ export default function MessageArea({ conversationId, liveMessages, wsStatus, pa
   const [input, setInput] = useState('')
   const [isPending, startTransition] = useTransition()
   const bottomRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const activeSenderId = useChatStore((s) => s.activeSenderId)
   const senderId = activeSenderId ?? participants[0]?.id ?? null
@@ -78,6 +79,9 @@ export default function MessageArea({ conversationId, liveMessages, wsStatus, pa
 
   useEffect(() => {
     getMessages(conversationId).then(setMessages)
+    // Auto-focus input when switching conversations
+    const timer = setTimeout(() => inputRef.current?.focus(), 80)
+    return () => clearTimeout(timer)
   }, [conversationId])
 
   useEffect(() => {
@@ -211,6 +215,7 @@ export default function MessageArea({ conversationId, liveMessages, wsStatus, pa
       {/* Input */}
       <form onSubmit={handleSubmit} className="border-t border-border p-4 flex gap-3">
         <input
+          ref={inputRef}
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
