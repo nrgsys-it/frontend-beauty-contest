@@ -1,0 +1,39 @@
+{
+  "name": "aasd-nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p ${PORT:-3001}",
+    "build": "next build",
+    "start": "next start -p ${PORT:-3001}",
+    "lint": "next lint",
+    "ws-server": "tsx ws-server/index.ts",
+    "start:aspire": "concurrently \"next dev\" \"tsx ws-server/index.ts\""
+  },
+  "dependencies": {
+    "next": "15.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@prisma/client": "^6.0.0",
+    "ws": "^8.18.0",
+    "zustand": "^5.0.0",
+    "zod": "^3.23.8",
+    "next-auth": "^5.0.0-beta.25",
+    "@tanstack/react-query": "^5.62.0",
+    "framer-motion": "^11.15.0"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/ws": "^8.5.13",
+    "prisma": "^6.0.0",
+    "tsx": "^4.19.2",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.1",
+    "@tailwindcss/postcss": "^4.0.0",
+    "tailwindcss": "^4.0.0",
+    "concurrently": "^9.0.0"
+  }
+}
