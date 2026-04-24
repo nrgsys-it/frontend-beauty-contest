@@ -23,7 +23,7 @@ export default async function WsDemoPage() {
           title={activeConversation.title}
         />
       ) : (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-500">
+        <div className="rounded-xl border border-border bg-surface p-6 text-sm text-text-muted">
           A conversation and at least one user are required in backend seed data.
         </div>
       )}

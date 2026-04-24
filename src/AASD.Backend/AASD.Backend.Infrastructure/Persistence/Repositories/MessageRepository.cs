@@ -17,11 +17,11 @@ public sealed class MessageRepository(BackendDbContext dbContext) : IMessageRepo
     public async Task<Message> AddAndReturnAsync(Guid id, Guid conversationId, Guid senderId, string content, DateTime createdAt, CancellationToken cancellationToken = default)
     {
         await dbContext.Database.ExecuteSqlInterpolatedAsync($@"
-            INSERT INTO ""Messages"" (""Id"", ""ConversationId"", ""SenderId"", ""Content"", ""MessageSequence"", ""CreatedAt"")
+            INSERT INTO messages (id, conversation_id, sender_id, content, message_sequence, created_at)
             VALUES (
                 {id}, {conversationId}, {senderId}, {content},
                 COALESCE(
-                    (SELECT MAX(""MessageSequence"") FROM ""Messages"" WHERE ""ConversationId"" = {conversationId}),
+                    (SELECT MAX(message_sequence) FROM messages WHERE conversation_id = {conversationId}),
                     0
                 ) + 1,
                 {createdAt}

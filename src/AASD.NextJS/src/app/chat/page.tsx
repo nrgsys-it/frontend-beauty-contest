@@ -16,7 +16,7 @@ export default async function ChatPage({
   const conversations = await getConversations()
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-white">
+    <div className="h-[calc(100vh-8rem)] flex rounded-xl overflow-hidden border border-border shadow-sm bg-surface">
       <Suspense fallback={<ConversationListSkeleton />}>
         <ChatLayout
           conversations={conversations}
