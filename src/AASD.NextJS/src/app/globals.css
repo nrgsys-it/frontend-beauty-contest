@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+/* ─── Design token palette (light theme) ─────────────────────────────────── */
+:root {
+  /* Legacy tokens kept for backward-compat */
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* Semantic colour tokens */
+  --color-primary: #4f46e5;        /* indigo-600 */
+  --color-primary-hover: #4338ca;  /* indigo-700 */
+  --color-surface: #ffffff;
+  --color-surface-2: #f9fafb;      /* gray-50 */
+  --color-border: #e5e7eb;         /* gray-200 */
+  --color-text: #111827;           /* gray-900 */
+  --color-text-muted: #6b7280;     /* gray-500 */
+  --color-accent: #10b981;         /* emerald-500 */
+  --color-accent-hover: #059669;   /* emerald-600 */
+  --color-danger: #ef4444;         /* red-500 */
+  --color-warning: #f59e0b;        /* amber-500 */
+  --color-success: #10b981;        /* emerald-500 */
+}
+
+/* ─── Dark theme overrides (applied via <html class="dark"> or ThemeProvider) */
+.dark {
+  /* Legacy tokens */
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Semantic colour tokens */
+  --color-primary: #818cf8;        /* indigo-400 */
+  --color-primary-hover: #6366f1;  /* indigo-500 */
+  --color-surface: #111827;        /* gray-900 */
+  --color-surface-2: #1f2937;      /* gray-800 */
+  --color-border: #374151;         /* gray-700 */
+  --color-text: #f3f4f6;           /* gray-100 */
+  --color-text-muted: #9ca3af;     /* gray-400 */
+  --color-accent: #34d399;         /* emerald-400 */
+  --color-accent-hover: #10b981;   /* emerald-500 */
+  --color-danger: #f87171;         /* red-400 */
+  --color-warning: #fbbf24;        /* amber-400 */
+  --color-success: #34d399;        /* emerald-400 */
+}
+
+/* ─── Tailwind v4 @theme — maps CSS vars to utility-class colour names ────── */
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-surface: var(--color-surface);
+  --color-surface-2: var(--color-surface-2);
+  --color-border: var(--color-border);
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-danger: var(--color-danger);
+  --color-warning: var(--color-warning);
+  --color-success: var(--color-success);
+}
+
+/* ─── Base styles ─────────────────────────────────────────────────────────── */
+body {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
